@@ -1,21 +1,21 @@
 #!/usr/bin/env python
 
-import irclib, urllib, time, status, java, netsec, signal, sys, drunk, metasploit, reddit, tvdb, sleepy, buyvm, txtfiles, thread, md5
+import irclib, urllib, time, status, java, netsec, signal, sys, drunk, metasploit, reddit, tvdb, sleepy, buyvm, txtfiles, thread, md5, bitcoin, json
 
-network = '66.225.195.39'
-port = 9999
+network = 'irc.129irc.com'
+port = 6697
 
-channel1 = '#main'
+channel1 = '#the129'
 #channel1 = '#testing'
 
-channel2 = '#whyte'
+#channel2 = '#whyte'
 #channel2 = '#testing2'
 
-delay = 900
-#delay = 5
+#delay = 900
+delay = 5
 
-nick = 'Zer0-Bot'
-name = 'Zer0 Bot'
+nick = 'RustyBot'
+name = 'RustyBot'
 
 #a = txtfiles.doit()
 #for line in a:
@@ -44,6 +44,14 @@ class ClientClass ( irclib.SimpleIRCClient ):
 #           for line in a:
 #                connection.privmsg(channel,line)
 #            connection.privmsg(channel,txtfile)
+        if msg == '!bitcoin':
+            messages = json.loads(bitcoin.getTicker())
+            #print messages
+            #high = messages['ticker']['high']
+            #low = messages['ticker']['low']
+            #last = messages['ticker']['last']
+            text = "BTC | btc-e | High - " + str(messages['ticker']['high']) + " | Low - " + str(messages['ticker']['low']) + " | Last - " + str(messages['ticker']['last'])
+            connection.privmsg(channel,text)
         if msg == '!buyvm':
             messages = buyvm.getinfo()
             for line in messages:
@@ -117,7 +125,7 @@ class ClientClass ( irclib.SimpleIRCClient ):
                 connection.privmsg(channel,line)
 
         if msg == '!help':
-            text = "Heyo " + dude + "! Try !drunk, !status, !status-ticket <ticket>, !javabugs, !netsec, !reddit <cat>, !metasploit <days>, !tv <show>, !buyvm, !ascii, or !sleepytime :-D"
+            text = "Heyo " + dude + "! Try !bitcoin, !drunk, !status, !status-ticket <ticket>, !javabugs, !netsec, !reddit <cat>, !metasploit <days>, !tv <show>, !buyvm, !ascii, or !sleepytime :-D"
             connection.privmsg(channel,text)
 
 def allthethings(delay):
@@ -129,12 +137,13 @@ def allthethings(delay):
         # Retardo modification to irclib to make it break and re-call this to add non-sync 'multi-threading'
         irc.start()
         # if delay is up
+        """
         if time.time() >= newtime:
             #
             # Any functions to be run intermittently
             #
 
-            # Check buyvm for new stock 
+            # Check buyvm for new stock
             print "Checking on BuyVM"
             if len(d.keys()) == 0:
                 print "First run, getting baseline"
@@ -149,11 +158,11 @@ def allthethings(delay):
                         irc.connection.privmsg(channel1,msg)
             
             newtime = time.time() + delay
-
+        """
 
 if __name__=="__main__":
     irc = ClientClass()
     irc.connect(network, port, nick, ircname = name, ssl = True)
     irc.connection.join(channel1)
-    irc.connection.join(channel2)
+    #irc.connection.join(channel2)
     irc.ircobj.execute_delayed(0,allthethings(delay))
